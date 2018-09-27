@@ -1,0 +1,65 @@
+<div>
+  <!-- 面包屑导航 -->
+  <el-breadcrumb separator="/" class="common-tittle">
+    <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+    <el-breadcrumb-item>商品管理</el-breadcrumb-item>
+    <el-breadcrumb-item>商品分类</el-breadcrumb-item>
+  </el-breadcrumb>
+  <!-- 搜索和添加用户 -->
+  <el-row :gutter="20">
+    <el-col :span="6">
+      <el-input placeholder="请输入内容" v-model="searchCategories" class="input-with-select">
+        <el-button slot="append" icon="el-icon-search"></el-button>
+      </el-input>
+    </el-col>
+    <el-col :span="2">
+      <el-button type="success" plain @click="showAddCategories">添加分类</el-button>
+    </el-col>
+  </el-row>
+  <!-- 表格主体 -->
+  <el-table :data="categoriesLists" stripe v-loading="loading">
+    <el-table-tree-column tree-key="cat_id" parent-key="cat_pid" level-key="cat_level" :indent-size="30" file-icon="icon icon-file"
+      folder-icon="icon icon-folder" prop="cat_name" label="分类名称" width="220">
+    </el-table-tree-column>
+    <el-table-column prop="cat_deleted" label="是否有效">
+      <template slot-scope="scope">
+        <span v-text="scope.row.cat_deleted=='fasle'?'有效':'无效'"></span>
+      </template>
+    </el-table-column>
+    <el-table-column prop="cat_level" label="菜单级别">
+      <template slot-scope="scope">
+        <span v-if="scope.row.cat_level==0">一级</span>
+        <span v-else-if="scope.row.cat_level==1">二级</span>
+        <span v-else="scope.row.cat_level==2">三级</span>
+      </template>
+    </el-table-column>
+    <el-table-column label="操作">
+      <template slot-scope="scope">
+        <el-button type="primary" icon="el-icon-edit" plain size="mini"></el-button>
+        <el-button type="danger" icon="el-icon-delete" plain size="mini"></el-button>
+      </template>
+    </el-table-column>
+  </el-table>
+  <!-- 分页栏 -->
+  <el-pagination background layout="prev, pager, next" :total="categoriesTotal" :page-size="pagesize" @current-change="changeCurrentPage"
+    :current-page.sync="curPage">
+  </el-pagination>
+  <!-- 添加分类对话框  -->
+  <el-dialog title="添加分类" :visible.sync="AddCategoriesDialog">
+    <el-form :model="AddCategoriesForm">
+      <el-form-item label="分类名称" label-width="200px">
+        <el-input v-model="AddCategoriesForm.cat_name" autocomplete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="父级名称" label-width="200px">
+        <el-cascader :change-on-select="true" :options="categoriesLists" v-model="AddCategoriesFormOptions" @change="handleChange"
+          :props="{value:'cat_id',label:'cat_name'}">
+        </el-cascader>
+      </el-form-item>
+    </el-form>
+    <div slot="footer" class="dialog-footer">
+      <el-button @click="AddCategoriesDialog = false">取 消</el-button>
+      <el-button type="primary" @click="sendAddCategoriesDialog">确 定</el-button>
+    </div>
+  </el-dialog>
+
+</div>

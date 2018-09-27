@@ -1,0 +1,6 @@
+.user-wrapper .el-input {
+  width: 250px;
+}
+.user-wrapper .input-with-select .el-input-group__prepend {
+  background-color: #fff;
+}
